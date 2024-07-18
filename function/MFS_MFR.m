@@ -1,10 +1,10 @@
 function [Z,loss,iter]  = MFS_MRC(train_data,~,num_feature,num_label,optmParameter,C,G,L)
 %% optimization parameters
-alpha            = optmParameter.alpha;    % 1·¶Êı
-beta             = optmParameter.beta;     % 2£¬1·¶Êı
-gamma            = optmParameter.gamma;    % ¶ÀÁ¢ĞÔ
-lambda1          = optmParameter.lambda1;  % ÊµÀıÏà¹ØĞÔ
-lambda2          = optmParameter.lambda2;  % ¾Ö²¿½á¹¹
+alpha            = optmParameter.alpha;    % 1èŒƒæ•°
+beta             = optmParameter.beta;     % 2ï¼Œ1èŒƒæ•°
+gamma            = optmParameter.gamma;    % ç‹¬ç«‹æ€§
+lambda1          = optmParameter.lambda1;  % å®ä¾‹ç›¸å…³æ€§
+lambda2          = optmParameter.lambda2;  % å±€éƒ¨ç»“æ„
 sigma            = optmParameter.sigma;
 maxIter          = optmParameter.maxIter;
 miniLossMargin   = optmParameter.minimumLossMargin;
@@ -16,10 +16,10 @@ X = train_data;
 num_dim = size(X,2);
 % I2 = eye(num_dim);
 XTX = X'*X;
-% 1·¶ÊıÔ¼ÊøµÄW
+% 1èŒƒæ•°çº¦æŸçš„W
 W   = (XTX + sigma*eye(num_dim)) \ C;
 Zeta_Wk = W;
-% 2£¬1·¶ÊıÔ¼ÊøµÄM
+% 2ï¼Œ1èŒƒæ•°çº¦æŸçš„M
 M   = (XTX + sigma*eye(num_dim)) \ C;
 Zeta_Mk = M;
 %% Iterative  
@@ -27,7 +27,7 @@ iter = 1;
 oldloss = 0;
 tk1 = 1;
 
-%% ¼ÆËãLIP
+%% è®¡ç®—LIP
 A = gradL21(M);
 varepsilon = 0.01;
 I1 = eye(num_feature,num_label);
@@ -64,7 +64,7 @@ while iter <= maxIter
     W_1 = (q1*(M*M')+q2*G+q3*L+I)\(Wk-q2*G*M-q3*L*M);
     M_1 = (q1*(W*W')+q2*G+q3*L+I)\(Mk-q2*G*W-q3*L*W);
     
-    % ¸üĞÂ tk£¬ÖĞ¼ä Zeta_Wk, Zeta_Mk
+    % æ›´æ–° tkï¼Œä¸­é—´ Zeta_Wk, Zeta_Mk
     tk_1=tk1;
     tk1=(1 + sqrt(4*tk_1^2 + 1))/2;
 
@@ -74,7 +74,7 @@ while iter <= maxIter
     W=W_1;
     M=M_1;
 
-    %% ¿ªÊ¼¼ÆËãËğÊ§º¯ÊıµÄÖµ
+    %% å¼€å§‹è®¡ç®—æŸå¤±å‡½æ•°çš„å€¼
     O1 = ((M+W) - C);
     DiscriminantLoss = (1/2)*trace(O1'* O1);
     WM_correlationloss = (gamma/2)*trace((W'*M)' * (W'*M));
@@ -87,7 +87,7 @@ while iter <= maxIter
        
     loss(iter,1) = totalloss;
     if abs(oldloss - totalloss) <= miniLossMargin
-        %±¾´Îµü´úµÄ½á¹ûÓëÉÏ´ÎµÄ½á¹ûÏà²îÉÙÓÚÔ¤¶©µÄ×îĞ¡ËğÊ§¼ä¾àÊ±£¬½áÊøÑ­»·
+        %æœ¬æ¬¡è¿­ä»£çš„ç»“æœä¸ä¸Šæ¬¡çš„ç»“æœç›¸å·®å°‘äºé¢„è®¢çš„æœ€å°æŸå¤±é—´è·æ—¶ï¼Œç»“æŸå¾ªç¯
         break;
     elseif totalloss <=0
         break;
